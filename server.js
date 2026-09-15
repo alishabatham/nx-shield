@@ -4,7 +4,11 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import dns from 'dns';
 import nodemailer from 'nodemailer';
+import path from 'path';
+import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // Fix Node.js DNS SRV lookup on Windows networks
 try {
   dns.setServers(['8.8.8.8', '8.8.4.4']);
@@ -257,6 +261,15 @@ app.get('/api/responses', async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
+
+const frontendPath = path.join(__dirname, "dist");
+
+app.use(express.static(frontendPath));
+app.get("*splat", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+});
+
 
 app.listen(PORT, () => {
   console.log(`🚀 NX Shield Backend running on http://localhost:${PORT}`);
